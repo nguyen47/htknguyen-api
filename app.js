@@ -6,6 +6,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const categoriesRouter = require("./routes/categories");
+const postsRouter = require("./routes/posts");
 
 const app = express();
 mongoose
@@ -24,5 +25,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use("/api/categories", categoriesRouter);
+app.use("/api/posts", postsRouter);
 
 module.exports = app;

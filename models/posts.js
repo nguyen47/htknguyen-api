@@ -1,5 +1,4 @@
-const slug = require("slug");
-const { Category } = require("../models/categories");
+const { categorySchema } = require("../models/categories");
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
 const mongoose = require("mongoose");
@@ -31,8 +30,7 @@ const postSchema = new mongoose.Schema({
     maxlength: 255
   },
   slug: {
-    type: String,
-    default: slug(this.title)
+    type: String
   },
   image: {
     type: String,
@@ -50,17 +48,15 @@ const postSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  tags: [
-    {
-      name: {
-        type: String
-      }
-    }
-  ],
+  tags: [],
   comments: [commentSchema],
   category: {
-    type: Category,
+    type: categorySchema,
     required: true
+  },
+  created_at: {
+    type: Date,
+    default: new Date()
   }
 });
 

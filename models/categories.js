@@ -11,9 +11,7 @@ const categorySchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 255
+    minlength: 5
   }
 });
 
@@ -28,7 +26,6 @@ function validateCategory(categories) {
     description: Joi.string()
       .min(5)
       .max(255)
-      .required()
   };
 
   return Joi.validate(categories, schema);
@@ -36,3 +33,4 @@ function validateCategory(categories) {
 
 module.exports.Category = Category;
 module.exports.validate = validateCategory;
+module.exports.categorySchema = categorySchema;
