@@ -69,10 +69,10 @@ function validatePost(posts) {
       .max(255)
       .required(),
     slug: Joi.string(),
-    views: Joi.number(),
     image: Joi.string().required(),
     content: Joi.string().required(),
-    categoryId: Joi.required().string()
+    categoryId: Joi.string().required(),
+    tags: Joi.array()
   };
 
   return Joi.validate(posts, schema);
