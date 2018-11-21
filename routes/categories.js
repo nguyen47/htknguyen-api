@@ -62,4 +62,9 @@ router.get("/:id", async (req, res) => {
   res.send(category);
 });
 
+router.delete("/:id", async (req, res) => {
+  const category = await Category.findByIdAndRemove(req.params.id);
+  res.send(category);
+});
+
 module.exports = router;

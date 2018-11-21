@@ -1,4 +1,4 @@
-const multer = require("multer");
+const { upload } = require("../config/imageSetting");
 const slugify = require("slugify");
 const { Post, validate, validateComment } = require("../models/posts");
 const { Category } = require("../models/categories");
@@ -10,17 +10,6 @@ router.get("/", async (req, res) => {
   res.send(posts);
 });
 
-// Setting for upload images
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/images/uploads");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.fieldname + "-" + Date.now());
-  }
-});
-const upload = multer({ storage: storage });
-
 router.post("/", upload.single("image"), async (req, res) => {
   // Validate
   const { error } = validate(req.body);
@@ -28,7 +17,6 @@ router.post("/", upload.single("image"), async (req, res) => {
     return res.status(400).send(error.details[0].message);
   }
 
-  // Upload image using multer
   if (!req.file) {
     return res.status(400).send("Image is required");
   }

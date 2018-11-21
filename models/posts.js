@@ -71,7 +71,8 @@ function validatePost(posts) {
     slug: Joi.string(),
     content: Joi.string().required(),
     categoryId: Joi.string().required(),
-    tags: Joi.array()
+    tags: Joi.array(),
+    isPublish: Joi.boolean()
   };
 
   return Joi.validate(posts, schema);
