@@ -22,19 +22,22 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.post("/", upload.single("image"), async (req, res) => {
-  // Check errors
+  // Validate
   const { error } = validate(req.body);
   if (error) {
     return res.status(400).send(error.details[0].message);
   }
+
+  // Upload image using multer
+  if (!req.file) {
+    return res.status(400).send("Image is required");
+  }
+
   // Find category's id
   const categoryFounded = await Category.findById(req.body.categoryId);
   if (!categoryFounded) {
-    res.status(400).send("Category with the given Id not found");
+    return res.status(400).send("Category with the given Id not found");
   }
-
-  // Upload image using multer
-  console.log(req.file);
 
   // Save to database title, slug, content, isPublish, tags, category
   let post = new Post({
@@ -47,7 +50,7 @@ router.post("/", upload.single("image"), async (req, res) => {
       _id: categoryFounded._id,
       title: categoryFounded.title
     },
-    image: req.body.image
+    image: req.file.path
   });
 
   // Save to database
