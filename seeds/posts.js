@@ -30,7 +30,7 @@ const doSeed = async () => {
   }
 
   let items = [];
-  for (i = 0; i < 70; i++) {
+  for (i = 0; i < 10; i++) {
     const fakeTitle = faker.lorem.sentence();
     items.push({
       title: fakeTitle,

@@ -61,17 +61,13 @@ router.put("/:id", upload.single("image"), async (req, res) => {
   }
 
   if (req.file) {
-    const path = post.image;
-    fs.stat(`./${path}`, function(err, stats) {
-      console.log(stats); //here we got all information of file in stats variable
-
+    console.log(req.file.path);
+    fs.stat(post.image, (err, stats) => {
       if (err) {
         return console.error(err);
       }
-
-      fs.unlink("./${path}", function(err) {
+      fs.unlink(post.image, function(err) {
         if (err) return console.log(err);
-        console.log("file deleted successfully");
       });
     });
   }
