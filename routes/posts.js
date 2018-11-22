@@ -1,3 +1,4 @@
+const fs = require("fs");
 const { upload } = require("../config/imageSetting");
 const slugify = require("slugify");
 const { Post, validate, validateComment } = require("../models/posts");
@@ -18,7 +19,7 @@ router.post("/", upload.single("image"), async (req, res) => {
   }
 
   if (!req.file) {
-    return res.status(400).send("Image is required");
+    return res.status(400).send("'image'   is required");
   }
 
   // Find category's id
@@ -41,10 +42,41 @@ router.post("/", upload.single("image"), async (req, res) => {
     image: req.file.path
   });
 
-  // Save to database
-  // post = await post.save();
+  post = await post.save();
 
   res.send(post);
+});
+
+router.put("/:id", upload.single("image"), async (req, res) => {
+  // Validate
+  const { error } = validate(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+
+  const post = await Post.findById(req.params.id);
+
+  if (!post) {
+    res.status(400).send("Post with given Id not found");
+  }
+
+  if (req.file) {
+    const path = post.image;
+    fs.stat(`./${path}`, function(err, stats) {
+      console.log(stats); //here we got all information of file in stats variable
+
+      if (err) {
+        return console.error(err);
+      }
+
+      fs.unlink("./${path}", function(err) {
+        if (err) return console.log(err);
+        console.log("file deleted successfully");
+      });
+    });
+  }
+
+  res.send("Work");
 });
 
 module.exports = router;
