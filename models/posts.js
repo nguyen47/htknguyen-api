@@ -1,19 +1,15 @@
 const { categorySchema } = require("../models/categories");
+const { userSchema } = require("../models/users");
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
 const mongoose = require("mongoose");
 
 const commentSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 255
+  user: {
+    type: userSchema,
+    required: true
   },
-  email: {
-    type: String
-  },
-  website: {
+  subject: {
     type: String
   },
   content: {
@@ -92,6 +88,15 @@ function validateComment(comments) {
   return Joi.validate(comments, schema);
 }
 
+function validateImage(image) {
+  const schema = {
+    image: Joi.string().required()
+  };
+
+  return Joi.validate(image, schema);
+}
+
 module.exports.Post = Post;
 module.exports.validate = validatePost;
 module.exports.validateComment = validateComment;
+module.exports.validateImage = validateImage;

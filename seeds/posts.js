@@ -2,6 +2,7 @@ const slugify = require("slugify");
 const seeder = require("mongoose-seed");
 const faker = require("faker");
 const { Category } = require("../models/categories");
+const { User } = require("../models/users");
 const mongoose = require("mongoose");
 const _ = require("lodash");
 mongoose
@@ -16,15 +17,16 @@ const doSeed = async () => {
   const categories = await Category.find();
   const getRandom = _.sample(categories);
 
+  const fakeUsers = await User.find();
+  const getRandomUsers = _.sample(fakeUsers);
   // Seed comments
 
   let fakeComments = [];
 
   for (i = 0; i < 10; i++) {
     fakeComments.push({
-      name: faker.name.findName(),
-      email: faker.internet.email(),
-      website: faker.internet.url(),
+      user: getRandomUsers,
+      subject: faker.lorem.sentence(),
       content: faker.lorem.sentences()
     });
   }

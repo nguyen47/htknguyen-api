@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { upload } = require("../config/imageSetting");
 const slugify = require("slugify");
-const { Post, validate, validateComment } = require("../models/posts");
+const { Post, validate, validateImage } = require("../models/posts");
 const { Category } = require("../models/categories");
 const express = require("express");
 const router = express.Router();
@@ -18,8 +18,9 @@ router.post("/", upload.single("image"), async (req, res) => {
     return res.status(400).send(error.details[0].message);
   }
 
-  if (!req.file) {
-    return res.status(400).send("'image'   is required");
+  const validateImage = validateImage(req.file);
+  if (!validateImage.error) {
+    return res.status(400).send(validateImage.details[0].message);
   }
 
   // Find category's id

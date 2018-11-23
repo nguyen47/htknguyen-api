@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -19,11 +19,22 @@ const UserSchema = new mongoose.Schema({
     maxlength: 1024
   },
   isAdmin: {
-    type: boolean,
+    type: Boolean,
     default: false
   }
 });
 
-const User = mongoose.Model("User", UserSchema);
+const User = mongoose.model("User", userSchema);
+
+function validateUser(user) {
+  const schema = {
+    name: Joi.string().required(),
+    email: Joi.email().required(),
+    password: Joi.string().required()
+  };
+  return Joi.validate(user, schema);
+}
 
 module.exports.User = User;
+module.exports.validate = validateUser;
+module.exports.userSchema = userSchema;
