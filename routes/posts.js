@@ -54,14 +54,14 @@ router.put("/:id", upload.single("image"), async (req, res) => {
     return res.status(400).send(error.details[0].message);
   }
 
-  const post = await Post.findById(req.params.id);
+  let post = await Post.findById(req.params.id);
 
   if (!post) {
     res.status(400).send("Post with given Id not found");
   }
 
+  // If image is choose -> Delete the previous one
   if (req.file) {
-    console.log(req.file.path);
     fs.stat(post.image, (err, stats) => {
       if (err) {
         return console.error(err);
@@ -72,7 +72,44 @@ router.put("/:id", upload.single("image"), async (req, res) => {
     });
   }
 
-  res.send("Work");
+  // Find category's id
+  const categoryFounded = await Category.findById(req.body.categoryId);
+  if (!categoryFounded) {
+    return res.status(400).send("Category with the given Id not found");
+  }
+
+  // Query fist
+  post.title = req.body.title;
+  post.slug = slugify(req.body.title);
+  post.isPublish = req.body.isPublish;
+  post.tags = req.body.tags;
+  post.category = {
+    _id: categoryFounded._id,
+    title: categoryFounded.title
+  };
+  post.image = req.file.path;
+
+  post = await post.save();
+
+  res.send(post);
+});
+
+router.delete("/:id", async (req, res) => {
+  const post = await Post.findByIdAndRemove(req.params.id);
+
+  if (!post) {
+    return res.status(400).send("Post is not valid");
+  }
+
+  res.send(post);
+});
+
+router.get("/:id", async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  if (!post) {
+    return res.status(400).send("Post with given id not found");
+  }
+  res.send(post);
 });
 
 module.exports = router;
