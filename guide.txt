@@ -1,0 +1,3 @@
+Note for config folder
+Map jwtPrivateKey setting to htknguyen_jwtPrivateKey environment variables
+export htknguyen_jwtPrivateKey=....
