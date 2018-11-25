@@ -72,4 +72,12 @@ router.post("/comments", auth, async (req, res) => {
 
   res.send(post);
 });
+
+router.get("/me", async (req, res) => {
+  if (!user) {
+    return res.status(400).send("The user with the given ID was not found.");
+  }
+
+  res.send(user);
+});
 module.exports = router;
