@@ -1,17 +1,18 @@
-const auth = require("../middleware/auth");
-const { Post, validateComment } = require("../models/posts");
+const admin = require("../../middleware/admin");
+const auth = require("../../middleware/auth");
+const { Post, validateComment } = require("../../models/posts");
 const _ = require("lodash");
-const { User, validate } = require("../models/users");
+const { User, validate } = require("../../models/users");
 const express = require("express");
 const router = express.Router();
 
 /* GET home page. */
-router.get("/", async (req, res) => {
+router.get("/", [auth, admin], async (req, res) => {
   const users = await User.find().sort("name");
   res.send(users);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", [auth, admin], async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -34,7 +35,7 @@ router.post("/", async (req, res) => {
   res.send(_.pick(user, ["id", "name", "email"]));
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", [auth, admin], async (req, res) => {
   const user = await User.findById(req.params.id);
 
   if (!user) {
@@ -44,12 +45,12 @@ router.get("/:id", async (req, res) => {
   res.send(user);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", [auth, admin], async (req, res) => {
   const user = await User.findByIdAndRemove(req.params.id);
   res.send(user);
 });
 
-router.post("/comments", auth, async (req, res) => {
+router.post("/comments", [auth, admin], async (req, res) => {
   const { error } = validateComment(req.body);
 
   if (error) return res.status(400).send(error.details[0].message);

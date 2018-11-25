@@ -1,12 +1,14 @@
+const admin = require("../../middleware/admin");
+const auth = require("../../middleware/auth");
 const fs = require("fs");
-const { upload } = require("../config/imageSetting");
+const { upload } = require("../../config/imageSetting");
 const slugify = require("slugify");
-const { Post, validate, validateImage } = require("../models/posts");
-const { Category } = require("../models/categories");
+const { Post, validate, validateImage } = require("../../models/posts");
+const { Category } = require("../../models/categories");
 const express = require("express");
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", [auth, admin], async (req, res) => {
   const posts = await Post.find().sort("created_at");
   res.send(posts);
 });
@@ -48,7 +50,7 @@ router.post("/", upload.single("image"), async (req, res) => {
   res.send(post);
 });
 
-router.put("/:id", upload.single("image"), async (req, res) => {
+router.put("/:id", [auth, admin], upload.single("image"), async (req, res) => {
   // Validate
   const { error } = validate(req.body);
   if (error) {
@@ -95,7 +97,7 @@ router.put("/:id", upload.single("image"), async (req, res) => {
   res.send(post);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", [auth, admin], async (req, res) => {
   const post = await Post.findByIdAndRemove(req.params.id);
 
   if (!post) {
@@ -105,7 +107,7 @@ router.delete("/:id", async (req, res) => {
   res.send(post);
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", [auth, admin], async (req, res) => {
   const post = await Post.findById(req.params.id);
   if (!post) {
     return res.status(400).send("Post with given id not found");

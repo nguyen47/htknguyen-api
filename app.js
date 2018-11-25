@@ -6,10 +6,13 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-const categoriesRouter = require("./routes/categories");
-const postsRouter = require("./routes/posts");
-const usersRouter = require("./routes/users");
+// Route
 const authRouter = require("./routes/auth");
+// Admin Routes
+const categoriesRouter = require("./routes/admin/categories");
+const postsRouter = require("./routes/admin/posts");
+const usersRouter = require("./routes/admin/users");
+// Client Routes
 
 // Check all environment variables will work
 if (!config.get("jwtPrivateKey")) {
@@ -33,8 +36,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static("public"));
 
-app.use("/api/categories", categoriesRouter);
-app.use("/api/posts", postsRouter);
-app.use("/api/users", usersRouter);
 app.use("/api/auth", authRouter);
+// Admin Routes Init
+app.use("/api/admin/categories", categoriesRouter);
+app.use("/api/admin/posts", postsRouter);
+app.use("/api/admin/users", usersRouter);
+
+// Client Routes Init
 module.exports = app;
