@@ -1,8 +1,22 @@
 const { categorySchema } = require("../models/categories");
-const { userSchema } = require("../models/users");
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
 const mongoose = require("mongoose");
+
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength: 255
+  },
+  email: {
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength: 255
+  }
+});
 
 const commentSchema = new mongoose.Schema({
   user: {
@@ -15,6 +29,10 @@ const commentSchema = new mongoose.Schema({
   content: {
     type: String,
     required: true
+  },
+  created_at: {
+    type: Date,
+    default: new Date()
   }
 });
 
@@ -76,12 +94,8 @@ function validatePost(posts) {
 
 function validateComment(comments) {
   const schema = {
-    name: Joi.string()
-      .min(5)
-      .max(255)
-      .required(),
-    email: Joi.email(),
-    website: Joi.string(),
+    postId: Joi.string().required(),
+    subject: Joi.string(),
     content: Joi.string().required()
   };
 

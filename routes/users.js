@@ -1,3 +1,5 @@
+const auth = require("../middleware/auth");
+const { Post, validateComment } = require("../models/posts");
 const _ = require("lodash");
 const { User, validate } = require("../models/users");
 const express = require("express");
@@ -6,8 +8,6 @@ const router = express.Router();
 /* GET home page. */
 router.get("/", async (req, res) => {
   const users = await User.find().sort("name");
-  // All comment
-
   res.send(users);
 });
 
@@ -49,4 +49,27 @@ router.delete("/:id", async (req, res) => {
   res.send(user);
 });
 
+router.post("/comments", auth, async (req, res) => {
+  const { error } = validateComment(req.body);
+
+  if (error) return res.status(400).send(error.details[0].message);
+
+  let post = await Post.findById(req.body.postId);
+
+  const comment = {
+    user: {
+      _id: req.user._id,
+      name: req.user.name,
+      email: req.user.email
+    },
+    subject: req.body.subject,
+    content: req.body.content
+  };
+
+  post.comments.push(comment);
+
+  post = await post.save();
+
+  res.send(post);
+});
 module.exports = router;

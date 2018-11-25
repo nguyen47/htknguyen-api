@@ -25,7 +25,11 @@ const doSeed = async () => {
 
   for (i = 0; i < 10; i++) {
     fakeComments.push({
-      user: getRandomUsers,
+      user: {
+        _id: getRandomUsers._id,
+        name: getRandomUsers.name,
+        email: getRandomUsers.email
+      },
       subject: faker.lorem.sentence(),
       content: faker.lorem.sentences()
     });
